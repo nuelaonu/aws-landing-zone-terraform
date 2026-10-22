@@ -1,0 +1,11 @@
+# Managed by Ansible - EC2 baseline role. Do not edit by hand.
+Port {{ baseline_sshd_port }}
+PermitRootLogin {{ baseline_sshd_permit_root_login }}
+PasswordAuthentication {{ baseline_sshd_password_authentication }}
+ChallengeResponseAuthentication no
+MaxAuthTries {{ baseline_sshd_max_auth_tries }}
+X11Forwarding no
+AllowAgentForwarding no
+ClientAliveInterval 300
+ClientAliveCountMax 2
+Protocol 2

@@ -1,0 +1,12 @@
+---
+galaxy_info:
+  author: Emmanuela O
+  description: CIS-style EC2 host baseline - SSH hardening, auditd, sysctl, package floor
+  license: MIT
+  min_ansible_version: "2.15"
+  platforms:
+    - name: Amazon
+      versions:
+        - "2"
+        - "2023"
+dependencies: []

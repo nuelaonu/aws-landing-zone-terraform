@@ -1,0 +1,67 @@
+---
+- name: Install baseline packages
+  ansible.builtin.package:
+    name: "{{ baseline_base_packages }}"
+    state: present
+
+- name: Apply kernel hardening via sysctl
+  ansible.posix.sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    sysctl_file: /etc/sysctl.d/99-baseline.conf
+    reload: true
+  loop: "{{ baseline_sysctl_settings | dict2items }}"
+  notify: Reload sysctl
+
+- name: Deploy hardened sshd configuration
+  ansible.builtin.template:
+    src: sshd_config.j2
+    dest: /etc/ssh/sshd_config.d/99-baseline.conf
+    owner: root
+    group: root
+    mode: "0600"
+    validate: /usr/sbin/sshd -t -f %s
+  notify: Restart sshd
+
+- name: Ensure auditd is installed
+  ansible.builtin.package:
+    name: auditd
+    state: present
+  when: baseline_install_auditd
+
+- name: Deploy auditd baseline rules
+  ansible.builtin.template:
+    src: audit-baseline.rules.j2
+    dest: /etc/audit/rules.d/99-baseline.rules
+    owner: root
+    group: root
+    mode: "0640"
+  when: baseline_install_auditd
+  notify: Restart auditd
+
+- name: Ensure auditd is enabled and running
+  ansible.builtin.service:
+    name: auditd
+    state: started
+    enabled: true
+  when: baseline_install_auditd
+
+- name: Note SSM-first management posture
+  ansible.builtin.debug:
+    msg: >-
+      SSM-first is {{ baseline_use_ssm }}: prefer AWS Systems Manager
+      Session Manager over inbound SSH. Keep port 22 closed in security
+      groups unless a break-glass path explicitly requires it.
+  when: baseline_use_ssm
+
+- name: Install CloudWatch agent when requested
+  ansible.builtin.package:
+    name: amazon-cloudwatch-agent
+    state: present
+  when: baseline_install_cloudwatch_agent
+
+- name: Ensure chrony time sync is enabled
+  ansible.builtin.service:
+    name: chronyd
+    state: started
+    enabled: true

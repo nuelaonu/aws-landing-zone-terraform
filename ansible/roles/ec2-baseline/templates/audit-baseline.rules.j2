@@ -1,0 +1,7 @@
+# Managed by Ansible - auditd baseline rules.
+-D
+-b 8192
+-f 1
+{% for rule in baseline_audit_rules %}
+{{ rule }}
+{% endfor %}

@@ -1,0 +1,6 @@
+---
+- name: Apply EC2 host baseline
+  hosts: baseline
+  become: true
+  roles:
+    - role: ec2-baseline

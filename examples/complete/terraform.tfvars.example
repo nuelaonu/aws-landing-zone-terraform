@@ -1,0 +1,4 @@
+# Copy to terraform.tfvars and edit. Values below are fake examples only.
+aws_region      = "us-east-1"
+log_bucket_name = "example-org-log-archive-111122223333"
+cur_bucket_name = "example-org-cur-111122223333"

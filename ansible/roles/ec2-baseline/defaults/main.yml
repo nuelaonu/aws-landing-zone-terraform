@@ -1,0 +1,29 @@
+---
+# Defaults for the EC2 host baseline role.
+baseline_sshd_port: 22
+baseline_sshd_permit_root_login: "no"
+baseline_sshd_password_authentication: "no"
+baseline_sshd_max_auth_tries: 3
+baseline_install_auditd: true
+baseline_install_cloudwatch_agent: false
+baseline_use_ssm: true
+baseline_base_packages:
+  - auditd
+  - chrony
+  - curl
+  - jq
+  - tmux
+  - unzip
+  - vim-minimal
+baseline_sysctl_settings:
+  net.ipv4.conf.all.send_redirects: "0"
+  net.ipv4.conf.all.accept_redirects: "0"
+  net.ipv4.conf.all.accept_source_route: "0"
+  net.ipv4.tcp_syncookies: "1"
+  kernel.randomize_va_space: "2"
+baseline_audit_rules:
+  - "-w /etc/passwd -p wa -k identity"
+  - "-w /etc/shadow -p wa -k identity"
+  - "-w /etc/sudoers -p wa -k scope"
+  - "-w /var/log/auth.log -p wa -k logins"
+  - "-a always,exit -F arch=b64 -S execve -k exec"
